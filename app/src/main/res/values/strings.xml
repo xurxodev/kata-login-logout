@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">KataLoginLogout</string>
+    <string name="login_button">Login</string>
+    <string name="username_label">Insert username</string>
+    <string name="password_label">Insert password</string>
+
 </resources>
