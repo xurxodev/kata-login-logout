@@ -11,17 +11,20 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
+    private val logIn = LogIn()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         login_button.setOnClickListener {
-            if (login_username.text.toString() == "admin" &&
-                login_password.text.toString() == "admin"
-            ) {
+            if (logIn.performLogin(
+                    login_username.text.toString(),
+                    login_password.text.toString())) {
                 showMessage(R.string.login_success_message)
                 login_container.visibility = View.GONE
                 logout_container.visibility = View.VISIBLE
+                hideKeyboard()
             } else {
                 showMessage(R.string.login_error_message)
             }
@@ -46,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
             .show()
     }
 
-    fun hideKeyboardFrom(view: View) {
+    fun hideKeyboard() {
         val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(login_password.windowToken, 0)
     }
