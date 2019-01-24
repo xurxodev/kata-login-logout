@@ -1,174 +1,89 @@
 package xurxodev.com.kataloginlogout
 
-import junit.framework.Assert.fail
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
 
+@RunWith(MockitoJUnitRunner::class)
 class PresenterShould {
+
+    @Mock
+    lateinit var timeProvider: TimeProvider
+
+    companion object {
+        private const val ANY_INVALID_PASSWORD = "password"
+        private const val ANY_VALID_PASSWORD = "admin"
+        private const val ANY_INVALID_USERNAME = "username"
+        private const val ANY_VALID_USERNAME = "admin"
+    }
+
+    @Mock
+    private lateinit var view: Presenter.View
+
     @Test
-    fun `show logOut form and login success message if credentials is valid`() {
+    fun `show logOut and login success message if credentials is valid`() {
         val presenter = givenAPresenterWithValidLogOut()
-
-        val view = object : Presenter.View {
-            override fun showLogInForm() {
-                fail()
-            }
-
-            override fun hideLogInForm() {
-                assert(true)
-            }
-
-            override fun showLogOutForm() {
-                assert(true)
-            }
-
-            override fun hideLogOutForm() {
-                fail()
-            }
-
-            override fun showLogInSuccessMessage() {
-                assert(true)
-            }
-
-            override fun showLogInErrorMessage() {
-                fail()
-            }
-
-            override fun showLogOutErrorMessage() {
-                fail()
-            }
-        }
 
         presenter.attachView(view)
 
-        presenter.onLogIn("admin", "admin")
+        presenter.onLogIn(ANY_VALID_USERNAME, ANY_VALID_PASSWORD)
+
+        verify(view).showLogOutForm()
+        verify(view).showLogInSuccessMessage()
     }
 
     @Test
     fun `show login error message if credentials is invalid`() {
         val presenter = givenAPresenterWithValidLogOut()
 
-        val view = object : Presenter.View {
-            override fun showLogInForm() {
-                fail()
-            }
-
-            override fun hideLogInForm() {
-                fail()
-            }
-
-            override fun showLogOutForm() {
-                fail()
-            }
-
-            override fun hideLogOutForm() {
-                fail()
-            }
-
-            override fun showLogInSuccessMessage() {
-                fail()
-            }
-
-            override fun showLogInErrorMessage() {
-                assert(true)
-            }
-
-            override fun showLogOutErrorMessage() {
-                fail()
-            }
-        }
-
         presenter.attachView(view)
 
-        presenter.onLogIn("admin", "no admin")
+        presenter.onLogIn(ANY_INVALID_USERNAME, ANY_INVALID_PASSWORD)
+
+        verify(view).showLogInErrorMessage()
     }
 
     @Test
     fun `show logIn form if millis on logout is valid`() {
         val presenter = givenAPresenterWithValidLogOut()
 
-        val view = object : Presenter.View {
-            override fun showLogInForm() {
-                assert(true)
-            }
-
-            override fun hideLogInForm() {
-                fail()
-            }
-
-            override fun showLogOutForm() {
-                fail()
-            }
-
-            override fun hideLogOutForm() {
-                assert(true)
-            }
-
-            override fun showLogInSuccessMessage() {
-                fail()
-            }
-
-            override fun showLogInErrorMessage() {
-                fail()
-            }
-
-            override fun showLogOutErrorMessage() {
-                fail()
-            }
-        }
-
         presenter.attachView(view)
 
         presenter.onLogOut()
+
+        verify(view).showLogInForm()
+        verify(view).hideLogOutForm()
     }
 
     @Test
     fun `show logout error message if millis on logout is invalid`() {
         val presenter = givenAPresenterWithInvalidLogOut()
 
-        val view = object : Presenter.View {
-            override fun showLogInForm() {
-                fail()
-            }
-
-            override fun hideLogInForm() {
-                fail()
-            }
-
-            override fun showLogOutForm() {
-                fail()
-            }
-
-            override fun hideLogOutForm() {
-                fail()
-            }
-
-            override fun showLogInSuccessMessage() {
-                fail()
-            }
-
-            override fun showLogInErrorMessage() {
-                fail()
-            }
-
-            override fun showLogOutErrorMessage() {
-                assert(true)
-            }
-        }
-
         presenter.attachView(view)
 
         presenter.onLogOut()
+
+        verify(view).showLogOutErrorMessage()
     }
 
     private fun givenAPresenterWithValidLogOut(): Presenter {
         val logIn = LogIn()
-        val logOut = LogOut(ValidTimeProvider())
+        val logOut = givenALogOut(2)
         return Presenter(logIn, logOut)
     }
 
     private fun givenAPresenterWithInvalidLogOut(): Presenter {
         val logIn = LogIn()
-        val logOut = LogOut(InvalidTimeProvider())
+        val logOut = givenALogOut(3)
         return Presenter(logIn, logOut)
+    }
+
+    private fun givenALogOut(nowMillis: Long): LogOut {
+        whenever(timeProvider.getCurrentMillis()).thenReturn(nowMillis)
+
+        return LogOut(timeProvider)
     }
 }

@@ -33,6 +33,11 @@ class MainActivity : AppCompatActivity(), Presenter.View {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.detachView()
+    }
+
     private fun showMessage(@StringRes stringId: Int) {
         Toast.makeText(this, stringId, Toast.LENGTH_SHORT)
             .show()
