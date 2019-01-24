@@ -9,7 +9,7 @@ class LogInShould {
     fun `return true if username is admin and password is admin`() {
         val logIn = LogIn()
 
-        val result = logIn.performLogin("admin", "admin")
+        val result = logIn.performLogIn("admin", "admin")
 
         assertTrue(result)
     }
@@ -18,7 +18,7 @@ class LogInShould {
     fun `return false if username is empty and password is empty`() {
         val logIn = LogIn()
 
-        val result = logIn.performLogin("", "")
+        val result = logIn.performLogIn("", "")
 
         assertFalse(result)
     }
@@ -27,7 +27,7 @@ class LogInShould {
     fun `return true if username is admin and password is not admin`() {
         val logIn = LogIn()
 
-        val result = logIn.performLogin("admin", "no admin")
+        val result = logIn.performLogIn("admin", "no admin")
 
         assertFalse(result)
     }
@@ -36,7 +36,7 @@ class LogInShould {
     fun `return true if username is not admin and password is admin`() {
         val logIn = LogIn()
 
-        val result = logIn.performLogin("no admin", "admin")
+        val result = logIn.performLogIn("no admin", "admin")
 
         assertFalse(result)
     }

@@ -18,7 +18,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         login_button.setOnClickListener {
-            if (logIn.performLogin(
+            if (logIn.performLogIn(
                     login_username.text.toString(),
                     login_password.text.toString())) {
                 showMessage(R.string.login_success_message)
